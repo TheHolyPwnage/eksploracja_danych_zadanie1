@@ -43,15 +43,6 @@
 
 	<build>
 		<plugins>
-			<!-- <plugin> -->
-			<!-- <groupId>org.apache.maven.plugins</groupId> -->
-			<!-- <artifactId>maven-assembly-plugin</artifactId> -->
-			<!-- <configuration> -->
-			<!-- <descriptors> -->
-			<!-- <descriptor>src/main/resources/assembly.xml</descriptor> -->
-			<!-- </descriptors> -->
-			<!-- </configuration> -->
-			<!-- </plugin> -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
@@ -65,21 +56,6 @@
 					</descriptorRefs>
 				</configuration>
 			</plugin>
-			<!-- Plugin który odpowiada za dodanie do manifestu klasy zawierającej 
-				metodę 'main' -->
-<!-- 			<plugin> -->
-<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 				<artifactId>maven-jar-plugin</artifactId> -->
-<!-- 				<configuration> -->
-<!-- 					<archive> -->
-<!-- 						<manifest> -->
-<!-- 							<addClasspath>true</addClasspath> -->
-<!-- 							<classpathPrefix>lib/</classpathPrefix> -->
-<!-- 							<mainClass>pl.mchaniewski.ed.zadanie1.main.ApplicationStart</mainClass> -->
-<!-- 						</manifest> -->
-<!-- 					</archive> -->
-<!-- 				</configuration> -->
-<!-- 			</plugin> -->
 		</plugins>
 	</build>
 </project>
