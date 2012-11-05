@@ -1,21 +1,29 @@
 package pl.mchaniewski.ed.zadanie1.chart;
 
+import java.awt.BasicStroke;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import pl.mchaniewski.ed.zadanie1.algorithm.SingleStep;
 import pl.mchaniewski.ed.zadanie1.model.RawData;
 
-public class Chart {
+public class Chart extends Thread {
 	private RawData data;
+	private List<SingleStep> steps;
+	private String fileName;
+
 	private int xAxisIndex;
 	private int yAxisIndex;
 	private JFreeChart chart;
@@ -26,72 +34,45 @@ public class Chart {
 		this.yAxisIndex = yAxisIndex;
 	}
 
+	public Chart(RawData data, int xAxisIndex, int yAxisIndex,
+			List<SingleStep> steps) {
+		this.data = data;
+		this.xAxisIndex = xAxisIndex;
+		this.yAxisIndex = yAxisIndex;
+		this.steps = steps;
+	}
+
 	public JFreeChart generateChart() {
 		if (chart == null) {
 			chart = ChartFactory.createScatterPlot("Wykres rozproszenia",
 					"Atrybut " + xAxisIndex, "Atrybut" + yAxisIndex,
-					generateScatterDataSet(), PlotOrientation.VERTICAL, true, true,
-					false);
-			
-			
+					generateScatterDataSet(), PlotOrientation.VERTICAL, true,
+					true, false);
+
 			XYPlot xyPlot = (XYPlot) chart.getPlot();
 			xyPlot.setDomainCrosshairVisible(true);
 			xyPlot.setRangeCrosshairVisible(true);
-			
-			// -------------------------
-			
-//			XYPlot plot = new XYPlot();
 
-			/* Line */
-//			XYDataset scatterData = generateScatterDataSet();
-//			XYItemRenderer scatterRenderer = new XYLineAndShapeRenderer(true, false);
-//			ValueAxis xAxisTitle = new NumberAxis("Atrybut " + xAxisIndex);
-//			ValueAxis yAxisTitle = new NumberAxis("Atrybut " + yAxisIndex);
-//
-//			xyPlot.setDataset(1, scatterData);
-//			xyPlot.setRenderer(1, scatterRenderer);
-//			xyPlot.setDomainAxis(1, xAxisTitle);
-//			xyPlot.setRangeAxis(1, yAxisTitle);
-//			xyPlot.mapDatasetToDomainAxis(1, 0);
-//			xyPlot.mapDatasetToRangeAxis(1, 0);
-			
-			
-			
-			
-			// Map the scatter to the first Domain and first Range
-			//plot.mapDatasetToDomainAxis(0, 0);
-			//plot.mapDatasetToRangeAxis(0, 0);
-			
-			/* Line */
-			// Create the line data, renderer, and axis
-			// XYDataset collection2 = getLinePlotData();
-			// XYItemRenderer renderer2 = new XYLineAndShapeRenderer(true,
-			// false); // Lines only
-			// ValueAxis domain2 = new NumberAxis("Domain2");
-			// ValueAxis range2 = new NumberAxis("Range2");
-
-			// Set the line data, renderer, and axis into plot
-//			plot.setDataset(1, collection2);
-//			plot.setRenderer(1, renderer2);
-//			plot.setDomainAxis(1, domain2);
-//			plot.setRangeAxis(1, range2);
-
-			// Map the line to the second Domain and second Range
-//			plot.mapDatasetToDomainAxis(1, 1);
-//			plot.mapDatasetToRangeAxis(1, 1);
+			if (steps != null) {
+				generateLineDataSet(xyPlot);
+			}
 		}
 
 		return chart;
 	}
 
-	public void generatePng(String fileName) {
+	@Override
+	public void run() {
 		try {
 			ChartUtilities.saveChartAsPNG(new File(fileName + ".png"),
 					generateChart(), 1440, 768);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 
 	private XYDataset generateScatterDataSet() {
@@ -109,5 +90,41 @@ public class Chart {
 			xySeriesCollection.addSeries(series);
 		}
 		return xySeriesCollection;
+	}
+
+	private void generateLineDataSet(XYPlot plot) {
+		int counter = 1;
+		for (SingleStep step : steps) {
+			if (step.getCutoffPoint().getPoint() == null) {
+				break;
+			}
+
+			++counter;
+
+			XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+			XYSeries series = new XYSeries("Linia numer " + (counter - 1));
+			if (step.getCutoffPoint().getAttribute() == xAxisIndex) {
+				series.add(step.getCutoffPoint().getPoint(),
+						data.getAttributesMinimumValue(yAxisIndex));
+				series.add(step.getCutoffPoint().getPoint(),
+						data.getAttributesMaximumValue(yAxisIndex));
+			} else if (step.getCutoffPoint().getAttribute() == yAxisIndex) {
+				series.add(data.getAttributesMinimumValue(xAxisIndex), step
+						.getCutoffPoint().getPoint());
+				series.add(data.getAttributesMaximumValue(xAxisIndex), step
+						.getCutoffPoint().getPoint());
+			}
+			xySeriesCollection.addSeries(series);
+
+			XYItemRenderer lineRenderer = new XYLineAndShapeRenderer(true,
+					false);
+			lineRenderer.setStroke(new BasicStroke(3.0f, BasicStroke.CAP_ROUND,
+					BasicStroke.JOIN_ROUND, 1.0f, new float[] { 10.0f, 6.0f },
+					0.0f));
+
+			plot.setDataset(counter, xySeriesCollection);
+			plot.setRenderer(counter, lineRenderer);
+		}
+
 	}
 }

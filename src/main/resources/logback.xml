@@ -1,0 +1,28 @@
+<configuration>
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="STATIC_FILE" class="ch.qos.logback.core.FileAppender">
+		<file>logi_aplikacji.log</file>
+
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<root level="debug">
+<!-- 		<appender-ref ref="CONSOLE" /> -->
+		<appender-ref ref="STATIC_FILE" />
+	</root>
+
+	<logger name="pl.mchaniewski.ed.zadanie1.algorithm.SingleStep"
+		level="debug">
+<!-- 		<appender-ref red="CONSOLE" /> -->
+		<appender-ref ref="STATIC_FILE" />
+	</logger>
+</configuration>

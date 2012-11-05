@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 import org.apache.commons.lang3.StringUtils;
 
-import pl.mchaniewski.ed.zadanie1.model.Data;
+import pl.mchaniewski.ed.zadanie1.model.RawData;
 
 public class TxtParser extends Parser {
 	private static String DELIMITER = "(\\s+|\\t+)";
@@ -17,10 +17,10 @@ public class TxtParser extends Parser {
 	}
 
 	@Override
-	public Data parse() throws FileNotFoundException,
+	public RawData parse() throws FileNotFoundException,
 			InvalidLineLengthException {
 		Scanner scanner = getScanner();
-		Data data = new Data();
+		RawData data = new RawData();
 
 		try {
 			int lineNumber = 1;

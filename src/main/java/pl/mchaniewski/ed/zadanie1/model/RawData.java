@@ -50,14 +50,13 @@ public class RawData implements Cloneable {
 		data.add(row);
 	}
 
-	public class AttributeComparator implements Comparator<List<Double>> {
+	private class AttributeComparator implements Comparator<List<Double>> {
 		private final int attributeNumber;
 
 		public AttributeComparator(int attributeNumber) {
 			this.attributeNumber = attributeNumber;
 		}
 
-		@Override
 		public int compare(List<Double> o1, List<Double> o2) {
 			return o1.get(attributeNumber).compareTo(o2.get(attributeNumber));
 		}
@@ -73,8 +72,12 @@ public class RawData implements Cloneable {
 	}
 
 	public RawData dataWithoutSelectedRows(int rows, boolean top) {
-		if (rows + 1 == data.size()) {
+		if (rows >= data.size()) {
 			return new RawData();
+		}
+
+		if (rows < 0) {
+			return this;
 		}
 
 		if (top) {
@@ -123,6 +126,35 @@ public class RawData implements Cloneable {
 		}
 
 		return minimumValues.get(attributeIndex);
+	}
+
+	public boolean isAllObjectSingleClass() {
+		boolean singleClass = true;
+
+		Double clazz = null;
+		for (int row = 0; row < getRowCount(); ++row) {
+			if (clazz == null) {
+				clazz = getRowsClass(row);
+				continue;
+			}
+
+			if (!clazz.equals(getRowsClass(row))) {
+				singleClass = false;
+				break;
+			}
+		}
+
+		return singleClass;
+	}
+
+	public String rowToString(int rowNumber) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Row #").append(rowNumber);
+		for (Double val : data.get(rowNumber)) {
+			sb.append(" ").append(val);
+		}
+
+		return sb.toString();
 	}
 
 	@Override

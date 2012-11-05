@@ -58,16 +58,24 @@ public class CutoffPoint {
 	public void setConcentration(int concentration) {
 		this.concentration = concentration;
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("Atrybut: ").append(attribute).append("\n");
-		sb.append("Punkt: ").append(point).append("\n");
-		sb.append("Koncentracja: ").append(concentration).append("\n");
-		sb.append("Klasa: ").append(objClass).append("\n");
-		sb.append("Strona: ").append(minusSide ? "Strona minusowa" : "Strona plusowa").append("\n");
-		
+		sb.append("Odcięcie dla atrybutu: ").append(attribute).append("\n");
+		sb.append("Punkt odcięcia: ").append(point).append("\n");
+		sb.append("Ilość odciętych obiektów: ").append(concentration)
+				.append("\n");
+		sb.append("Klasa odciętych obiektów: ").append(objClass).append("\n");
+		sb.append("Strona odciętych obiektów: ");
+		if (minusSide) {
+			sb.append("minusowa").append("\n");
+		} else if (plusSide) {
+			sb.append("plusowa").append("\n");
+		} else {
+			sb.append("żadna ze stron (ostatni obszar)").append("\n");
+		}
+
 		return sb.toString();
 	}
 
